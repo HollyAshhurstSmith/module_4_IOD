@@ -1,0 +1,86 @@
+<html>
+  <head>
+    <title>Luxon DateTime Formatting</title>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.5.0/build/global/luxon.min.js"></script>
+    <!-- reference Luxon library -->
+  </head>
+  <body>
+    <h2>Luxon Date</h2>
+    <!-- container for Luxon output -->
+    <div id="displayLuxon"></div>
+    <script type="text/javascript">
+      (function () {
+        // create a shortcut and a new Luxon date
+        const DateTime = luxon.DateTime;
+        let nowLuxon = DateTime.now();
+        let eDisplayLuxon = document.getElementById("displayLuxon");
+        eDisplayLuxon.innerHTML = `<p>Unformatted date: ${nowLuxon}</p>`;
+        let formatted = nowLuxon.toFormat("MMMM dd, yyyy");
+        eDisplayLuxon.innerHTML += `<p>Formatted date: ${formatted}</p>`;
+        let newYork = nowLuxon
+          .setZone("America/New_York")
+          .toLocaleString(DateTime.DATETIME_FULFL);
+        eDisplayLuxon.innerHTML += `<p>New York date: ${newYork}</p>`;
+      })();
+
+      const date1 = luxon.DateTime.fromISO("2020-09-06T12:00");
+      const date2 = luxon.DateTime.fromISO("2019-06-10T14:00");
+
+      const diff = date1.diff(date2, ["years", "months", "days", "hours"]); // without given values, years/days/months attribute will return 0
+
+      console.log(diff.toObject(), diff.years, diff.months);
+
+      const diff2 = date1.diff(date2, ["days"]);
+      console.log(diff2.days);
+
+      // is between two dates
+      const Interval = luxon.Interval;
+      const DateTime = luxon.DateTime;
+      const interval = Interval.fromDateTimes(
+        DateTime.local(2023, 1, 1),
+        DateTime.local(2023, 3, 31)
+      );
+      let dateTimeToCheck = DateTime.now();
+      console.log(interval.contains(dateTimeToCheck));
+
+      console.log(interval.contains(DateTime.local(2023, 2, 1)));
+
+      //LAB QUESTIONS used Kingsley code and chatGPT to help put it all together
+
+      // 1. Calculate the number of days between your birthdate and the current date
+        const birthDate = DateTime.fromISO('1995-10-03');  //  birthdate in ISO format (YYYY-MM-DD)
+        const daysBetween = dateTimeToCheck.diff(birthDate, 'days').days;
+        console.log(`Number of days between birthdate and today: ${Math.floor(daysBetween)} days`);
+
+      // 2. Display the number of years, months, and days between your birthdate and the current date
+        let dif = dateTimeToCheck.diff(birthDate, ['years', 'months', 'days']);
+        console.log(`Years, Months, Days between birthdate and today: ${dif.years} years, ${dif.months} months, and ${dif.days} days`);
+
+      // 3. Given two dates, display the date closest to the current date
+        // Compare the differences between the current date and the two given dates
+          const diff3 = dateTimeToCheck.diff(date1, 'days').days;
+          const diff4 = dateTimeToCheck.diff(date2, 'days').days;
+
+          // Determine which date is closest to the current date
+          const closestDate = Math.abs(diff3) < Math.abs(diff4) ? date1 : date2;
+
+          // Display the closest date in ISO format
+          console.log(`The closest date to today is: ${closestDate.toISODate()}`);
+
+      // 4. Given two dates, display whether the first date is before or after the second date
+        if (date1 < date2) {
+          console.log('Date1 is before Date2');
+        } else if (date1 > date2) {
+          console.log('Date1 is after Date2');
+        } else {
+          console.log('Date1 is the same as Date2');
+        }
+
+        // 5. Display the current time in London
+        const londonTime = DateTime.now().setZone('Europe/London').toLocaleString(DateTime.TIME_WITH_SECONDS);
+        console.log(`Current time in London: ${londonTime}`);
+
+
+    </script>
+  </body>
+</html>

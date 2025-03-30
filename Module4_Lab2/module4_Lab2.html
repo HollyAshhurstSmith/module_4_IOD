@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Calculator</title>
+    
+    <style>
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
+
+.calculator {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+#display {
+    width: 100%;
+    height: 50px;
+    text-align: right;
+    font-size: 2rem;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+}
+
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.button {
+    background-color: #f5f5f5;
+    padding: 20px;
+    font-size: 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.button:hover {
+    background-color: #e0e0e0;
+}
+
+.button:active {
+    background-color: #d0d0d0;
+}
+
+    </style>
+</head>
+<body>
+
+<div class="calculator">
+    <input type="text" id="display" disabled>
+    <div class="buttons">
+        <button class="button" onclick="appendToDisplay('1')">1</button>
+        <button class="button" onclick="appendToDisplay('2')">2</button>
+        <button class="button" onclick="appendToDisplay('3')">3</button>
+        <button class="button" onclick="appendToDisplay('+')">+</button>
+        
+        <button class="button" onclick="appendToDisplay('4')">4</button>
+        <button class="button" onclick="appendToDisplay('5')">5</button>
+        <button class="button" onclick="appendToDisplay('6')">6</button>
+        <button class="button" onclick="appendToDisplay('-')">-</button>
+        
+        <button class="button" onclick="appendToDisplay('7')">7</button>
+        <button class="button" onclick="appendToDisplay('8')">8</button>
+        <button class="button" onclick="appendToDisplay('9')">9</button>
+        <button class="button" onclick="appendToDisplay('*')">*</button>
+        
+        <button class="button" onclick="appendToDisplay('0')">0</button>
+        <button class="button" onclick="clearDisplay()">C</button>
+        <button class="button" onclick="calculateResult()">=</button>
+        <button class="button" onclick="appendToDisplay('/')">/</button>
+    </div>
+</div>
+
+<script>
+    // Function to append clicked button value to the display
+function appendToDisplay(value) {
+    document.getElementById("display").value += value;
+}
+
+// Function to clear the display
+function clearDisplay() {
+    document.getElementById("display").value = "";
+}
+
+// Function to calculate the result
+function calculateResult() {
+    const display = document.getElementById("display");
+    let expression = display.value;
+
+    // Replace any potential syntax issues (like multiple operators in a row) for a cleaner calculation
+    expression = expression.replace(/(\d)([*/+-])(\d)/g, "$1 $2 $3");
+    
+    try {
+        const result = calculate(expression);
+        display.value = result;
+    } catch (e) {
+        display.value = "Error";
+    }
+}
+
+// Function to evaluate the expression manually without eval
+function calculate(expression) {
+    const operators = ['+', '-', '*', '/'];
+    let stack = [];
+    let num = 0;
+    let lastOperator = '+';
+
+    expression = expression.replace(/\s+/g, '');  // Remove all spaces
+
+    for (let i = 0; i < expression.length; i++) {
+        let char = expression[i];
+
+        if (char >= '0' && char <= '9') {
+            num = num * 10 + parseInt(char);
+        }
+
+        if (operators.includes(char) || i === expression.length - 1) {
+            if (lastOperator === '+') {
+                stack.push(num);
+            } else if (lastOperator === '-') {
+                stack.push(-num);
+            } else if (lastOperator === '*') {
+                stack.push(stack.pop() * num);
+            } else if (lastOperator === '/') {
+                if (num === 0) {
+                    throw new Error("Division by zero");
+                }
+                stack.push(stack.pop() / num);
+            }
+            lastOperator = char;
+            num = 0;
+        }
+    }
+
+    return stack.reduce((a, b) => a + b, 0); // chatGPT help with functioning part of calculator
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        background-color: #e3f2fd;
+      }
+
+      .card {
+        padding: 10px;
+      }
+
+      .card-title {
+        font-weight: 600;
+        font-size: 3em;
+        padding: 0 0 10px 0;
+      }
+
+      .card-description {
+        font-weight: 400;
+        font-size: 2em
+      }
+    </style>
+  </head>
+  <body>
+    <template id="card-template">
+      <div class="card">
+        <div class="card-body">
+          <div class="card-title"></div>
+          <div class="card-text"></div>
+          <img class="card-image">
+        </div>
+      </div>
+    </template>
+    <div id="card-list"></div>
+    <form id="newsForm">
+      <label for="newsTitle">Title:</label>
+      <br>
+      <input type="text" id="newsTitle" name="newsTitle">
+      <br>
+      <label for="newsContent">Content:</label>
+      <br>
+      <input type="text" id="newsContent" name="newsContent">
+      <br>
+      <br>
+      <input type="submit" value="Submit">
+    </form>
+    <button class="button" onclick=stopRefresh()>Stop Refresh</button>
+
+<script>
+
+function pushNews(form, news) {
+    let formData = new FormData(form);
+    let updatedData = { id: news.length + 1, title: formData.get("newsTitle"), content: formData.get("newsContent") };
+    news.push(updatedData)
+}
+
+document.getElementById("newsForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    pushNews(e.target, news);
+    console.log(news)
+});
+
+let news = [{
+        id: 1,
+        title: 'Election Results',
+        content: "Newly elected minister..."
+    },
+    {
+        id: 2,
+        title: 'Sporting Success',
+        content: "World Cup winners..."
+    },
+    {
+        id: 3,
+        title: 'Tornado Warning',
+        content: "Residents should prepare..."
+    }
+];
+
+function addNews(title, content) {
+    // clone the template
+    const template =
+        document.getElementById("card-template")
+        .content.cloneNode(true);
+    // populate the template
+    template.querySelector('.card-title').innerText =
+        title;
+    template.querySelector('.card-text').innerText =
+        content;
+    // include the populated template into the page
+    document.querySelector('#card-list')
+        .appendChild(template);
+}
+
+
+function newsLoop(news) {
+    let element = document.getElementById("card-list");
+    element.innerHTML = "";
+    for (const info of news) {
+        addNews(info.title, info.content)
+    }
+}
+
+newsLoop(news)
+
+let intervalLoop = setInterval(function() { newsLoop(news) }, 5000);
+
+
+function stopRefresh() {
+    clearInterval(intervalLoop); 
+}
+
+</script>
+</body>
+</html>
